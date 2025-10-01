@@ -1,11 +1,11 @@
 from django.urls import path
 from . import views
-from django.urls import path
-from . import views
 
 urlpatterns = [
-    path("api/canciones/", views.canciones_api, name="canciones_api"),
-    path("", views.index, name="index"),
-    path("add_song/", views.add_song, name="add_song"),
-    path("play/<int:cancion_id>/", views.play_song, name="play_song"),
+    path("", views.index, name="playlist_index"),
+    path("buscar/", views.buscar_itunes, name="buscar_itunes"),
+    path("agregar/", views.agregar_cancion, name="agregar_cancion"),
+    path("canciones/", views.listar_canciones, name="listar_canciones"),
+    path("reproducir/<int:cancion_id>/", views.reproducir, name="reproducir"),
+    path("historial/", views.ver_historial, name="ver_historial"),
 ]

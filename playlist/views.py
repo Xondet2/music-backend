@@ -1,52 +1,72 @@
 import requests
-from django.shortcuts import render, redirect, get_object_or_404
+from django.http import JsonResponse, HttpResponse
 from .models import Cancion, Historial
-from .forms import CancionForm
-from django.http import JsonResponse
-from .models import Cancion  # Ajusta al nombre real de tu modelo
 
-def canciones_api(request):
-    canciones = Cancion.objects.all().values("id", "titulo", "artista", "album", "duracion")
-    return JsonResponse(list(canciones), safe=False)
-
+# Home de la app
 def index(request):
-    query = request.GET.get("q")
-    canciones_api = []
+    return HttpResponse("🎶 API de Playlist funcionando con Render")
 
-    # Buscar en iTunes
-    if query:
-        url = f"https://itunes.apple.com/search?term={query}&entity=song&limit=10"
-        response = requests.get(url)
-        if response.status_code == 200:
-            data = response.json()
-            for item in data.get("results", []):
-                canciones_api.append({
-                    "titulo": item.get("trackName"),
-                    "artista": item.get("artistName"),
-                    "cover": item.get("artworkUrl100"),
-                    "preview": item.get("previewUrl")
-                })
+# Buscar canciones en iTunes
+def buscar_itunes(request):
+    query = request.GET.get("q", "")
+    if not query:
+        return JsonResponse({"error": "Falta el parámetro 'q'"}, status=400)
 
-    canciones_locales = Cancion.objects.all()
-    form = CancionForm()
+    url = "https://itunes.apple.com/search"
+    params = {"term": query, "media": "music", "limit": 10}
+    response = requests.get(url, params=params)
 
-    return render(request, "playlist/index.html", {
-        "query": query,
-        "canciones_api": canciones_api,
-        "canciones_locales": canciones_locales,
-        "form": form
-    })
+    if response.status_code != 200:
+        return JsonResponse({"error": "No se pudo conectar con iTunes"}, status=500)
 
+    data = response.json()
+    resultados = [
+        {
+            "titulo": track["trackName"],
+            "artista": track["artistName"],
+            "album": track.get("collectionName", ""),
+            "preview": track.get("previewUrl", ""),
+        }
+        for track in data.get("results", [])
+    ]
 
-def add_song(request):
-    if request.method == "POST":
-        form = CancionForm(request.POST, request.FILES)
-        if form.is_valid():
-            form.save()
-    return redirect("index")
+    return JsonResponse(resultados, safe=False)
 
+# Guardar canción en la base de datos (playlist)
+def agregar_cancion(request):
+    titulo = request.GET.get("titulo")
+    artista = request.GET.get("artista")
 
-def play_song(request, cancion_id):
-    cancion = get_object_or_404(Cancion, id=cancion_id)
-    Historial.objects.create(cancion=cancion)  # guardar en historial
-    return render(request, "playlist/play.html", {"cancion": cancion})
+    if not titulo or not artista:
+        return JsonResponse({"error": "Faltan parámetros"}, status=400)
+
+    cancion = Cancion.objects.create(titulo=titulo, artista=artista)
+    return JsonResponse({"id": cancion.id, "titulo": cancion.titulo, "artista": cancion.artista})
+
+# Listar canciones guardadas en la playlist
+def listar_canciones(request):
+    canciones = list(Cancion.objects.values("id", "titulo", "artista"))
+    return JsonResponse(canciones, safe=False)
+
+# Reproducir canción y guardarla en historial
+def reproducir(request, cancion_id):
+    try:
+        cancion = Cancion.objects.get(id=cancion_id)
+    except Cancion.DoesNotExist:
+        return JsonResponse({"error": "Canción no encontrada"}, status=404)
+
+    Historial.objects.create(cancion=cancion)
+    return JsonResponse({"mensaje": f"Reproduciendo {cancion.titulo} - {cancion.artista}"})
+
+# Ver historial de reproducciones
+def ver_historial(request):
+    historial = Historial.objects.select_related("cancion").order_by("-fecha_reproduccion")
+    data = [
+        {
+            "cancion": h.cancion.titulo,
+            "artista": h.cancion.artista,
+            "fecha": h.fecha_reproduccion.strftime("%Y-%m-%d %H:%M:%S"),
+        }
+        for h in historial
+    ]
+    return JsonResponse(data, safe=False)
