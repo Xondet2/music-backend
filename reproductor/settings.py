@@ -1,17 +1,13 @@
 import os
-import dj_database_url
 from pathlib import Path
-import dj_database_url
 
-# Rutas base
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-# Seguridad
-SECRET_KEY = os.getenv("SECRET_KEY", "django-insecure-key")
-DEBUG = os.getenv("DEBUG", "True") == "True"
-ALLOWED_HOSTS = ["localhost", "127.0.0.1", ".onrender.com"]
+SECRET_KEY = "cambia-esto-en-produccion"
+DEBUG = True
 
-# Aplicaciones instaladas
+ALLOWED_HOSTS = ["*"]
+
 INSTALLED_APPS = [
     "django.contrib.admin",
     "django.contrib.auth",
@@ -20,7 +16,6 @@ INSTALLED_APPS = [
     "django.contrib.messages",
     "django.contrib.staticfiles",
     "playlist",
-    "corsheaders",
 ]
 
 MIDDLEWARE = [
@@ -31,9 +26,6 @@ MIDDLEWARE = [
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
-    "corsheaders.middleware.CorsMiddleware",  # debe ir arriba de CommonMiddleware
-    "django.middleware.common.CommonMiddleware",
-
 ]
 
 ROOT_URLCONF = "reproductor.urls"
@@ -41,7 +33,7 @@ ROOT_URLCONF = "reproductor.urls"
 TEMPLATES = [
     {
         "BACKEND": "django.template.backends.django.DjangoTemplates",
-        "DIRS": [BASE_DIR / "frontend" / "templates"],  # Agregado: Carpeta de plantillas del frontend
+        "DIRS": [BASE_DIR / "templates"],
         "APP_DIRS": True,
         "OPTIONS": {
             "context_processors": [
@@ -56,41 +48,25 @@ TEMPLATES = [
 
 WSGI_APPLICATION = "reproductor.wsgi.application"
 
-# Configuración base: SQLite (local)
 DATABASES = {
-    'default': dj_database_url.config(default='sqlite:///db.sqlite3')
+    "default": {
+        "ENGINE": "django.db.backends.sqlite3",
+        "NAME": BASE_DIR / "db.sqlite3",
+    }
 }
 
-# Render: PostgreSQL
-if os.getenv("DATABASE_URL"):
-    DATABASES["default"] = dj_database_url.parse(
-        os.environ["DATABASE_URL"],
-        conn_max_age=600,
-        ssl_require=True,
-    )
+AUTH_PASSWORD_VALIDATORS = []
 
-# Validación de contraseñas
-AUTH_PASSWORD_VALIDATORS = [
-    {"NAME": "django.contrib.auth.password_validation.UserAttributeSimilarityValidator"},
-    {"NAME": "django.contrib.auth.password_validation.MinimumLengthValidator"},
-    {"NAME": "django.contrib.auth.password_validation.CommonPasswordValidator"},
-    {"NAME": "django.contrib.auth.password_validation.NumericPasswordValidator"},
-]
-
-# Permitir React (localhost:3000)
-CORS_ALLOWED_ORIGINS = [
-    "http://localhost:3000",
-]
-
-# Internacionalización
-LANGUAGE_CODE = "en-us"
-TIME_ZONE = "UTC"
+LANGUAGE_CODE = "es-es"
+TIME_ZONE = "America/Bogota"
 USE_I18N = True
 USE_TZ = True
 
-# Archivos estáticos
 STATIC_URL = "/static/"
-STATICFILES_DIRS = [BASE_DIR / "frontend" / "static"]  # Agregado: Carpeta de archivos estáticos del frontend
+STATICFILES_DIRS = [BASE_DIR / "static"]
 STATIC_ROOT = BASE_DIR / "staticfiles"
+
+MEDIA_URL = "/media/"
+MEDIA_ROOT = BASE_DIR / "media"
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"

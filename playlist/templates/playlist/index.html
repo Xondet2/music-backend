@@ -3,59 +3,34 @@
 
 <head>
     <meta charset="UTF-8">
-    <title>🎵 Reproductor de Música</title>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+    <title>Reproductor Musical</title>
+    <link rel="stylesheet" href="/static/style.css">
 </head>
 
-<body class="container mt-4">
-    <h1 class="mb-4">🎵 Reproductor de Música</h1>
+<body>
+    <h1>🎵 Reproductor Musical</h1>
 
-    <!-- Buscador -->
-    <form method="get" class="mb-3">
-        <input type="text" name="q" placeholder="Buscar canción" class="form-control" value="{{ query }}">
+    <form method="get">
+        <input type="text" name="q" placeholder="Buscar en iTunes...">
+        <button type="submit">Buscar</button>
     </form>
 
-    <h3>🌍 Resultados en iTunes</h3>
-    <div class="list-group mb-4">
-        {% for c in canciones_api %}
-        <div class="list-group-item">
-            <img src="{{ c.cover }}" alt="cover" style="width:50px; height:50px; margin-right:10px;">
-            <strong>{{ c.titulo }}</strong> - {{ c.artista }}
-            {% if c.preview %}
-            <audio controls class="mt-2">
-                <source src="{{ c.preview }}" type="audio/mpeg">
-            </audio>
-            {% endif %}
-        </div>
-        {% empty %}
-        <p>No hay resultados de iTunes.</p>
-        {% endfor %}
-    </div>
+    <a href="{% url 'upload' %}">Subir canción desde PC</a>
 
-    <h3>💾 Canciones Locales</h3>
-    <!-- Subida de canciones -->
-    <form method="post" action="{% url 'add_song' %}" enctype="multipart/form-data" class="mb-4">
-        {% csrf_token %}
-        {{ form.as_p }}
-        <button type="submit" class="btn btn-success">➕ Agregar Canción</button>
-    </form>
-
-    <div class="list-group">
-        {% for c in canciones_locales %}
-        <div class="list-group-item">
-            <strong>{{ c.titulo }}</strong> - {{ c.artista }}
-            {% if c.archivo %}
-            <audio controls class="mt-2">
-                <source src="{{ c.archivo.url }}" type="audio/mpeg">
+    <ul id="playlist">
+        {% for song in songs %}
+        <li>
+            {{ song.trackName }} - {{ song.artistName }}
+            <audio controls>
+                <source src="{{ song.previewUrl }}" type="audio/mpeg">
             </audio>
-            {% else %}
-            <a class="btn btn-primary btn-sm mt-2" href="{% url 'play_song' c.id %}">▶ Reproducir</a>
-            {% endif %}
-        </div>
+        </li>
         {% empty %}
-        <p>No hay canciones locales guardadas.</p>
+        <li>No hay canciones todavía</li>
         {% endfor %}
-    </div>
+    </ul>
+
+    <script src="/static/script.js"></script>
 </body>
 
 </html>

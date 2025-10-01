@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Subir Canción</title>
+</head>
+
+<body>
+    <h2>Subir canción desde tu PC</h2>
+    <form method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        <input type="file" name="file" accept="audio/*">
+        <button type="submit">Subir</button>
+    </form>
+    <a href="/">⬅ Volver</a>
+</body>
+
+</html>

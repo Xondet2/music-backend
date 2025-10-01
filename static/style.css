@@ -1,0 +1,90 @@
+/* 🎵 Estilos generales */
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    background: linear-gradient(135deg, #1e1e2f, #282846);
+    color: #fff;
+    text-align: center;
+}
+
+h1,
+h2 {
+    margin: 20px 0;
+}
+
+a {
+    color: #00bfff;
+    text-decoration: none;
+}
+
+a:hover {
+    text-decoration: underline;
+}
+
+/* 🔎 Barra de búsqueda */
+form {
+    margin: 20px auto;
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+}
+
+input[type="text"] {
+    padding: 10px;
+    border-radius: 6px;
+    border: none;
+    width: 300px;
+}
+
+button {
+    padding: 10px 20px;
+    border: none;
+    background: #00bfff;
+    color: #fff;
+    border-radius: 6px;
+    cursor: pointer;
+}
+
+button:hover {
+    background: #0099cc;
+}
+
+/* 📋 Lista de canciones */
+ul {
+    list-style: none;
+    padding: 0;
+    margin: 30px auto;
+    max-width: 600px;
+}
+
+li {
+    background: #333;
+    padding: 15px;
+    margin-bottom: 10px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    cursor: grab;
+}
+
+li.dragging {
+    opacity: 0.5;
+    background: #444;
+}
+
+audio {
+    margin-left: 20px;
+    height: 30px;
+}
+
+/* 📤 Subir archivos */
+form[enctype="multipart/form-data"] {
+    margin-top: 20px;
+    display: block;
+}
+
+input[type="file"] {
+    margin: 10px 0;
+}

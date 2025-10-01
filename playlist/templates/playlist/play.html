@@ -3,22 +3,12 @@
 
 <head>
     <meta charset="UTF-8">
-    <title>{{ cancion.titulo }}</title>
+    <title>Reproducir Canción</title>
 </head>
 
 <body>
-    <h1>▶ Reproduciendo: {{ cancion.titulo }} - {{ cancion.artista }}</h1>
-
-    {% if cancion.archivo %}
-    <audio controls autoplay>
-        <source src="{{ cancion.archivo.url }}" type="audio/mpeg">
-    </audio>
-    {% else %}
-    <p>No hay archivo de audio disponible.</p>
-    {% endif %}
-
-    <br>
-    <a href="{% url 'index' %}">⬅ Volver</a>
+    <h2>Reproduciendo canción #{{ pk }}</h2>
+    <a href="/">⬅ Volver</a>
 </body>
 
 </html>
