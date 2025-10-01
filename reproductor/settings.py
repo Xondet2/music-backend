@@ -33,7 +33,7 @@ MIDDLEWARE = [
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
 ]
 
-ROOT_URLCONF = "music_backend.urls"
+ROOT_URLCONF = "reproductor.urls"
 
 TEMPLATES = [
     {
