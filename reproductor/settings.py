@@ -51,7 +51,7 @@ TEMPLATES = [
     },
 ]
 
-WSGI_APPLICATION = "music_backend.wsgi.application"
+WSGI_APPLICATION = "reproductor.wsgi.application"
 
 # Configuración base: SQLite (local)
 DATABASES = {
