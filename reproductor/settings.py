@@ -32,6 +32,26 @@ MIDDLEWARE = [
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
 ]
 
+TEMPLATES = [
+    {
+        'BACKEND': 'django.template.backends.django.DjangoTemplates',
+        'DIRS': [os.path.join(BASE_DIR, 'templates')],
+        'APP_DIRS': True,
+        'OPTIONS': {
+            'context_processors': [
+                'django.template.context_processors.debug',
+                'django.template.context_processors.request',
+                'django.contrib.auth.context_processors.auth',
+                'django.contrib.messages.context_processors.messages',
+            ],
+        },
+    },
+]
+
+WSGI_APPLICATION = 'reproductor.wsgi.application'
+
+# 👇 AGREGA ESTA LÍNEA para quitar el warning de claves primarias
+DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 # Permitir llamadas desde tu frontend en Vercel
 CORS_ALLOWED_ORIGINS = [
     "https://tu-frontend.vercel.app",  # 👈 cambia por el dominio real de Vercel
