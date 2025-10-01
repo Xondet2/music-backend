@@ -19,8 +19,8 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
-    # apps propias
     "playlist",
+    "corsheaders",
 ]
 
 MIDDLEWARE = [
@@ -31,6 +31,9 @@ MIDDLEWARE = [
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
+    "corsheaders.middleware.CorsMiddleware",  # debe ir arriba de CommonMiddleware
+    "django.middleware.common.CommonMiddleware",
+
 ]
 
 ROOT_URLCONF = "reproductor.urls"
@@ -38,7 +41,7 @@ ROOT_URLCONF = "reproductor.urls"
 TEMPLATES = [
     {
         "BACKEND": "django.template.backends.django.DjangoTemplates",
-        "DIRS": [BASE_DIR / "templates"],  # 👈 carpeta templates ya creada
+        "DIRS": [BASE_DIR / "frontend" / "templates"],  # Agregado: Carpeta de plantillas del frontend
         "APP_DIRS": True,
         "OPTIONS": {
             "context_processors": [
@@ -74,6 +77,11 @@ AUTH_PASSWORD_VALIDATORS = [
     {"NAME": "django.contrib.auth.password_validation.NumericPasswordValidator"},
 ]
 
+# Permitir React (localhost:3000)
+CORS_ALLOWED_ORIGINS = [
+    "http://localhost:3000",
+]
+
 # Internacionalización
 LANGUAGE_CODE = "en-us"
 TIME_ZONE = "UTC"
@@ -82,7 +90,7 @@ USE_TZ = True
 
 # Archivos estáticos
 STATIC_URL = "/static/"
-STATICFILES_DIRS = [BASE_DIR / "static"]
+STATICFILES_DIRS = [BASE_DIR / "frontend" / "static"]  # Agregado: Carpeta de archivos estáticos del frontend
 STATIC_ROOT = BASE_DIR / "staticfiles"
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"

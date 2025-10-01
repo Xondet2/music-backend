@@ -1,10 +1,27 @@
 import requests
 from django.http import JsonResponse, HttpResponse
 from .models import Cancion, Historial
+from django.urls import path
+from . import views
+
+urlpatterns = [
+    path('', views.index, name='index'),
+
+    # iTunes
+    path('buscar/', views.buscar_itunes, name='buscar_itunes'),
+
+    # Playlist
+    path('playlist/', views.listar_canciones, name='listar_canciones'),
+    path('playlist/agregar/', views.agregar_cancion, name='agregar_cancion'),
+
+    # Reproductor
+    path('reproducir/<int:cancion_id>/', views.reproducir, name='reproducir'),
+    path('historial/', views.ver_historial, name='ver_historial'),
+]
 
 # Home de la app
 def index(request):
-    return HttpResponse("🎶 API de Playlist funcionando con Render")
+    return HttpResponse("¡Bienvenido a la página de inicio de Playlist!")
 
 # Buscar canciones en iTunes
 def buscar_itunes(request):
