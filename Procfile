@@ -1,1 +1,1 @@
-web: gunicorn reproductor.wsgi
+web: gunicorn reproductor.wsgi:application
