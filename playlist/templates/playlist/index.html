@@ -3,34 +3,181 @@
 
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Reproductor Musical</title>
-    <link rel="stylesheet" href="/static/style.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+        }
+
+        h1 {
+            color: #667eea;
+            text-align: center;
+            margin-bottom: 30px;
+            font-size: 2.5em;
+        }
+
+        .search-bar {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .search-bar input {
+            flex: 1;
+            padding: 15px;
+            border: 2px solid #ddd;
+            border-radius: 10px;
+            font-size: 16px;
+        }
+
+        .search-bar button,
+        .upload-btn {
+            padding: 15px 30px;
+            background: #667eea;
+            color: white;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 16px;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .search-bar button:hover,
+        .upload-btn:hover {
+            background: #5568d3;
+        }
+
+        .upload-btn {
+            margin-bottom: 30px;
+        }
+
+        h2 {
+            color: #333;
+            margin: 30px 0 15px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #667eea;
+        }
+
+        .playlist {
+            list-style: none;
+        }
+
+        .playlist li {
+            background: #f8f9fa;
+            padding: 15px;
+            margin-bottom: 10px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            transition: transform 0.2s;
+        }
+
+        .playlist li:hover {
+            transform: translateX(5px);
+            background: #e9ecef;
+        }
+
+        .song-info {
+            flex: 1;
+        }
+
+        .song-title {
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 5px;
+        }
+
+        .song-artist {
+            color: #666;
+            font-size: 0.9em;
+        }
+
+        audio {
+            width: 300px;
+        }
+
+        .empty-message {
+            text-align: center;
+            color: #999;
+            padding: 40px;
+            font-style: italic;
+        }
+    </style>
 </head>
 
 <body>
-    <h1>🎵 Reproductor Musical</h1>
+    <div class="container">
+        <h1>🎵 Reproductor Musical</h1>
 
-    <form method="get">
-        <input type="text" name="q" placeholder="Buscar en iTunes...">
-        <button type="submit">Buscar</button>
-    </form>
+        <form method="get" class="search-bar">
+            <input type="text" name="q" placeholder="Buscar canciones en iTunes..." value="{{ query }}">
+            <button type="submit">🔍 Buscar</button>
+        </form>
 
-    <a href="{% url 'upload' %}">Subir canción desde PC</a>
+        <a href="{% url 'upload' %}" class="upload-btn">📤 Subir canción desde PC</a>
 
-    <ul id="playlist">
-        {% for song in songs %}
-        <li>
-            {{ song.trackName }} - {{ song.artistName }}
-            <audio controls>
-                <source src="{{ song.previewUrl }}" type="audio/mpeg">
-            </audio>
-        </li>
-        {% empty %}
-        <li>No hay canciones todavía</li>
-        {% endfor %}
-    </ul>
+        {% if local_songs %}
+        <h2>🎧 Mis Canciones</h2>
+        <ul class="playlist">
+            {% for song in local_songs %}
+            <li>
+                <div class="song-info">
+                    <div class="song-title">{{ song.titulo }}</div>
+                    <div class="song-artist">{{ song.artista }}</div>
+                </div>
+                <audio controls>
+                    <source src="{{ song.archivo }}" type="audio/mpeg">
+                    Tu navegador no soporta el elemento de audio.
+                </audio>
+            </li>
+            {% endfor %}
+        </ul>
+        {% endif %}
 
-    <script src="/static/script.js"></script>
+        {% if itunes_songs %}
+        <h2>🎼 Resultados de iTunes</h2>
+        <ul class="playlist">
+            {% for song in itunes_songs %}
+            <li>
+                <div class="song-info">
+                    <div class="song-title">{{ song.trackName }}</div>
+                    <div class="song-artist">{{ song.artistName }}</div>
+                </div>
+                <audio controls>
+                    <source src="{{ song.previewUrl }}" type="audio/mpeg">
+                </audio>
+            </li>
+            {% endfor %}
+        </ul>
+        {% endif %}
+
+        {% if not local_songs and not itunes_songs %}
+        <div class="empty-message">
+            <p>No hay canciones todavía. ¡Sube tu primera canción o busca en iTunes!</p>
+        </div>
+        {% endif %}
+    </div>
 </body>
 
 </html>

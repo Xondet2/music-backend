@@ -1,8 +1,8 @@
 from django.urls import path
-from . import views
+from .views import index, play, upload_file  # Importa solo las vistas necesarias
 
 urlpatterns = [
-    path("", views.index, name="index"),
-    path("play/<int:pk>/", views.play, name="play"),
-    path("upload/", views.upload_file, name="upload"),
+    path("", index, name="index"),
+    path("play/<int:pk>/", play, name="play"),
+    path("upload/", upload_file, name="upload"),
 ]
